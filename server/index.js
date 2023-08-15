@@ -8,8 +8,14 @@ import morgan from "morgan"
 import path from "path"
 import { fileURLToPath } from "url"
 import multer from "multer"
-import { error } from "console"
-import { connect } from "http2"
+import authRoutes from "./routes/auth.js"
+import userRoutes from "./routes/users.js"
+import postRoutes from "./routes/posts.js"
+import { verifyToken } from "./middlewares/auth.js"
+import { register } from "./controllers/auth.js"
+import { createPost } from "./controllers/posts.js"
+
+
 
 /* CONFIGURATIONS */
 
@@ -60,6 +66,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
+
+/* ROUTES WITH FILES */
+
+// When the client requests access to the/auth/register path through POST, 
+// the upload.single ("picture") middleware is first used to process the uploaded file, 
+// and then the processing process is handed over to the register processing function to complete the registration logic
+app.post("/auth/register", upload.single("picture"), register)
+app.post("/posts", verifyToken, upload.single("picture"), createPost)
+
+
+/* ROUTES */
+app.use("/auth", authRoutes)
+app.use("/users", userRoutes)
+app.use("/posts", postRoutes)
 
 /* MONGOOSE SETUP */
 
