@@ -1,34 +1,38 @@
-import React from 'react'
-import { useState } from 'react'
-import { Box, Button, TextField, useMediaQuery, Typography, useTheme } from '@mui/material'
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  TextField,
+  useMediaQuery,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 // Form library, simplifying the process of form processing
-import { Formik } from 'formik'
+import { Formik } from "formik";
 // Validate and process form data in the front-end and back-end
-import * as yup from "yup"
-import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { setLogin } from 'state'
-import Dropzone from 'react-dropzone'
-import FlexBetween from 'components/FlexBetween'
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLogin } from "state";
+import Dropzone from "react-dropzone";
+import FlexBetween from "components/FlexBetween";
 
 // Corresponding validation rules have been set for each field
-const registerSchema  = yup.object().shape({
-  // Define the validation rules for these two fields, 
-  // requiring them to be of string type and not empty
-  firtName: yup.string().required("required"),
+const registerSchema = yup.object().shape({
+  firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
-  pasword: yup.string().required("required"),
+  password: yup.string().required("required"),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
-})
+});
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
-})
+});
 
 const initialValuesRegister = {
   firstName: "",
@@ -38,30 +42,29 @@ const initialValuesRegister = {
   location: "",
   occupation: "",
   picture: "",
-}
+};
 
 const initialValuesLogin = {
   email: "",
   password: "",
-}
+};
 
 const Form = () => {
-  const [pageType, setPageType] = useState("login")
-  const { palette } = useTheme()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const isNonMobile = useMediaQuery("(min-width: 600px)")
-  const isLogin = pageType === "login"
-  const isRegister = pageType === "register"
+  const [pageType, setPageType] = useState("login");
+  const { palette } = useTheme();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const isLogin = pageType === "login";
+  const isRegister = pageType === "register";
 
-  const register = async (values, onsubmitProps) => {
-    // build and send form requests containing multiple types of data
-    const formData = new FormData()
-
+  const register = async (values, onSubmitProps) => {
+    // this allows us to send form info with image
+    const formData = new FormData();
     for (let value in values) {
-      formData.append(value, values[value])
+      formData.append(value, values[value]);
     }
-    formData.append("picturePath", values.picture.name)
+    formData.append("picturePath", values.picture.name);
 
     const savedUserResponse = await fetch(
       "http://localhost:3001/auth/register",
@@ -69,47 +72,38 @@ const Form = () => {
         method: "POST",
         body: formData,
       }
-    )
-
-    const savedUser = await savedUserResponse.json()
-
-    // When the form is successfully submitted or the form data needs to be cleared,
-    // reset the values of the form fields to their initial state
-    onsubmitProps.resetForm()
+    );
+    const savedUser = await savedUserResponse.json();
+    onSubmitProps.resetForm();
 
     if (savedUser) {
-      setPageType("login")
+      setPageType("login");
     }
-  }
+  };
 
-  const login = async (values, onsubmitProps) => {
+  const login = async (values, onSubmitProps) => {
     const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
       method: "POST",
-      // Indicates that the data sent is in JSON format
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
-    })
-  
-    const loggedIn = await loggedInResponse.json()
-  
-    onsubmitProps.resetForm()
-  
+    });
+    const loggedIn = await loggedInResponse.json();
+    onSubmitProps.resetForm();
     if (loggedIn) {
       dispatch(
         setLogin({
           user: loggedIn.user,
           token: loggedIn.token,
         })
-      )
-  
-      navigate("/home")
+      );
+      navigate("/home");
     }
-  }
+  };
 
-  const handleFormSubmit = async (values, onsubmitProps) => {
-    if (isLogin) await login(values, onsubmitProps)
-    if (isRegister) await register(values, onsubmitProps)
-  }
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    if (isLogin) await login(values, onSubmitProps);
+    if (isRegister) await register(values, onSubmitProps);
+  };
 
   return (
     <Formik
@@ -278,7 +272,7 @@ const Form = () => {
         </form>
       )}
     </Formik>
-  )
-}
+  );
+};
 
-export default Form
+export default Form;
