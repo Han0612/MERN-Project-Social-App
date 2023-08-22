@@ -1,12 +1,12 @@
-import { Typography, useTheme } from "@mui/material"
-import FlexBetween from "components/FlexBetween"
-import WidgetWrapper from "components/WidgetWrapper"
+import { Typography, useTheme } from "@mui/material";
+import FlexBetween from "components/FlexBetween";
+import WidgetWrapper from "components/WidgetWrapper";
 
 const AdvertWidget = () => {
-  const { palette } = useTheme()
-  const dark = palette.neutral.dark
-  const main = palette.neutral.main
-  const medium = palette.neutral.medium
+  const { palette } = useTheme();
+  const dark = palette.neutral.dark;
+  const main = palette.neutral.main;
+  const medium = palette.neutral.medium;
 
   return (
     <WidgetWrapper>
@@ -32,7 +32,7 @@ const AdvertWidget = () => {
         is exfoliating skin and shining like light.
       </Typography>
     </WidgetWrapper>
-  )
-}
+  );
+};
 
-export default AdvertWidget
+export default AdvertWidget;
